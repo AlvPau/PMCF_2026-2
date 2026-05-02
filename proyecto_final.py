@@ -54,6 +54,25 @@ def calcular_rendimientos(df):
 
 def render_inciso_a():
     st.header("(a) Descarga de datos")
+    st.markdown(
+        """
+**JPMorgan Chase & Co. (NYSE: JPM)** es una de las instituciones financieras
+más grandes del mundo y el banco más grande de Estados Unidos por activos.
+Opera en banca de inversión, banca comercial, gestión de activos y servicios
+al consumidor.
+
+**Por qué este activo:**
+- Pertenece al sector financiero, muy sensible a tasas de interés, ciclo
+  económico y eventos de riesgo sistémico (crisis 2008-2009, COVID-19, ciclo
+  de alzas de la Fed 2022-2023).
+- Tiene historia bursátil amplia y líquida, ideal para estimar VaR, ES,
+  momentos estadísticos y pruebas de normalidad.
+- Su volatilidad moderada–alta lo hace un buen caso de estudio para los
+  modelos paramétricos, históricos y de Monte Carlo vistos en clase.
+- Yahoo Finance dispone de precios diarios desde antes de 2010, así que
+  cumple con el requisito de descargar datos desde 2010.
+        """
+    )
     st.markdown(f"Análisis de {TICKER} desde {START}.")
     precios = obtener_datos(TICKER, start=START)
     with st.expander("Ver registros de precios"):
@@ -158,13 +177,38 @@ def render_inciso_f(serie_rend):
     v95 = norm.ppf(0.05) * std_roll
     v99 = norm.ppf(0.01) * std_roll
     fig, ax = plt.subplots(figsize=(12, 5))
-    ax.plot(serie_rend, color="steelblue", alpha=0.4)
+    ax.plot(serie_rend, color="steelblue", alpha=0.4, label="Retornos")
     ax.plot(v95, color="red", label="VaR 95%")
     ax.plot(v99, color="darkred", linestyle="--", label="VaR 99%")
     ax.legend()
     st.pyplot(fig)
+ 
+    # Backtesting: violaciones del VaR con volatilidad móvil
+    st.subheader("Backtesting — Violaciones VaR volatilidad móvil")
+    df_vol = pd.DataFrame({
+        "Retorno": serie_rend,
+        "VaR_95": v95,
+        "VaR_99": v99
+    }).dropna()
+ 
+    filas = []
+    for nivel, col in [(0.95, "VaR_95"), (0.99, "VaR_99")]:
+        viol = int((df_vol["Retorno"] < df_vol[col]).sum())
+        filas.append({
+            "Nivel": f"{nivel:.1%}",
+            "Medida": "VaR",
+            "Método": "Vol. móvil (Normal)",
+            "Violaciones": viol,
+            "% Muestra": round(viol / len(df_vol) * 100, 2)
+        })
+    df_viol_f = pd.DataFrame(filas)
+    try:
+        st.dataframe(df_viol_f.style.map(color_pct, subset=["% Muestra"]), use_container_width=True)
+    except AttributeError:
+        st.dataframe(df_viol_f.style.applymap(color_pct, subset=["% Muestra"]), use_container_width=True)
+    st.caption("Recordatorio: una buena estimación genera un porcentaje de violaciones menor al 2.5%.")
     st.divider()
-
+ 
 def main():
     st.set_page_config(page_title="Proyecto MCF", layout="wide")
     st.title("Proyecto I – Métodos Cuantitativos en Finanzas")
