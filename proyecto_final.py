@@ -212,7 +212,7 @@ def render_inciso_f(serie_rend):
 def main():
     st.set_page_config(page_title="Proyecto MCF", layout="wide")
     st.title("Proyecto I – Métodos Cuantitativos en Finanzas")
-    st.markdown(" Álvarez Peralta Paulina Alejandra 
+    st.markdown("Álvarez Peralta Paulina Alejandra 
    Escobar García Vanessa
    Jiménez Chávez Vanessa Guadalupe
    Santana Mendoza Elias")
