@@ -212,10 +212,7 @@ def render_inciso_f(serie_rend):
 def main():
     st.set_page_config(page_title="Proyecto MCF", layout="wide")
     st.title("Proyecto I – Métodos Cuantitativos en Finanzas")
-    st.markdown("Álvarez Peralta Paulina Alejandra 
-   Escobar García Vanessa
-   Jiménez Chávez Vanessa Guadalupe
-   Santana Mendoza Elias")
+    st.markdown("Álvarez Peralta Paulina Alejandra, Escobar García Vanessa, Jiménez Chávez Vanessa Guadalupe, Santana Mendoza Elias")
     precios = render_inciso_a()
     serie_rend = render_inciso_b(precios)
     render_inciso_c(serie_rend)
